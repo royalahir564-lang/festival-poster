@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🙏 Ganesh Chaturthi Poster Maker 🙏</title>
+  <style>
+    body { text-align: center; font-family: Arial, sans-serif; }
+    canvas { border: 1px solid #ccc; margin-top: 10px; max-width: 100%; }
+  </style>
+</head>
+<body>
+  <h2>🙏 Ganesh Chaturthi Poster Maker 🙏</h2>
+
+  <input type="text" id="nameInput" placeholder="Apna Naam Likho">
+  <br><br>
+  <input type="file" id="uploadImage" accept="image/*">
+  <br><br>
+  <canvas id="posterCanvas" width="500" height="600"></canvas>
+  <br>
+  <button onclick="addName()">Naam Add Karo</button>
+  <button onclick="downloadPoster()">Download Poster</button>
+
+  <script>
+    let canvas = document.getElementById("posterCanvas");
+    let ctx = canvas.getContext("2d");
+
+    // 🎉 Poster Background
+    let poster = new Image();
+    poster.src = "ganesh.png";  
+    poster.onload = function() {
+      ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+    };
+
+    let uploadedImg = null;
+
+    // 🖊 Naam + Photo draw function
+    function drawPoster() {
+      ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+
+      if (uploadedImg) {
+        // Photo bottom-left me add karo
+        let imgX = 50; 
+        let imgY = canvas.height - 180; 
+        let imgW = 120; 
+        let imgH = 120;
+        ctx.drawImage(uploadedImg, imgX, imgY, imgW, imgH);
+
+        // Naam photo ke side me (right)
+        let name = document.getElementById("nameInput").value;
+        ctx.font = "28px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "left";
+        ctx.fillText(name, imgX + imgW + 20, imgY + imgH/2 + 10);
+      }
+    }
+
+    // 📷 Photo Upload
+    document.getElementById("uploadImage").addEventListener("change", function(e) {
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        uploadedImg = new Image();
+        uploadedImg.src = event.target.result;
+        uploadedImg.onload = function() {
+          drawPoster();
+        };
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    // 🖊 Naam add karne ka function
+    function addName() {
+      drawPoster();
+    }
+
+    // ⬇ Download button
+    function downloadPoster() {
+      let link = document.createElement('a');
+      link.download = 'ganesh_chaturthi_poster.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
